@@ -17,11 +17,17 @@ if __name__ == '__main__' :
     tracker = cv2.TrackerKCF_create()
     
     # Read video
-    video = WebcamVideoStream(src=0).start()
+    video = WebcamVideoStream(0).start()
+
 
 
     # Read first frame.
-    frame = video.read()
+    r, frame = video.read()
+#    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    if r == False:
+        print('erro')
+    
+#    frame = imutils.resize(frame, width=680)
 
     
     # Define an initial bounding box
@@ -35,7 +41,8 @@ if __name__ == '__main__' :
 
     while True:
         # Read a new frame
-        frame = video.read()
+        r, frame = video.read()
+    #    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         timer = cv2.getTickCount()
 
         # Update tracker
@@ -65,8 +72,9 @@ if __name__ == '__main__' :
         # Display result
         cv2.imshow("Tracking", frame)
 
-        # Exit if ESC pressed
-        k = cv2.waitKey(1) & 0xff
+        # Exit if ESC pre
+        # ssed
+        k = cv2.waitKey(15) & 0xff
         if k == ord('q') : 
 
             video.stop()
