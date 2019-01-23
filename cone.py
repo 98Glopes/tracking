@@ -302,7 +302,8 @@ def from_stream():
 
         testcone(frame, stream=True)
         fps.update()
-
+        cv2.imshow('', frame)
+        cv2.waitKey(1)
 
 
 from_stream()

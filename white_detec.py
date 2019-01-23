@@ -65,6 +65,7 @@ if __name__ == '__main__':
         if cv2.waitKey(1) == ord('q'):
             
             fps.stop()
+            camera.stop()
             print(fps.elapsed())
             print(fps.fps())
             cv2.destroyAllWindows()
