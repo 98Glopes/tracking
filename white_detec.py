@@ -38,7 +38,7 @@ if __name__ == '__main__':
 
 #Le o frame disponivel da camera através da classe WebcamVideoStream
         frame = camera.read()
-        frame = imutils.resize(frame, width=680)
+#        frame = imutils.resize(frame, width=680)
 
 #Converte para escala de cinza, aplica um filtro gaussiano e binariza
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
