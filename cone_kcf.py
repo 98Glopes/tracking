@@ -18,7 +18,7 @@ if __name__ == '__main__' :
     tracker = cv2.TrackerKCF_create()
     
     #Escolher a partir dos argumentos entre acessar a camera ou abrir um video
-    video = cv2.VideoCapture(0)
+    video = cv2.VideoCapture('cone.mp4')
     #Inicializa o detector por HAAR Cascades
     df = cv2.CascadeClassifier('haar_cascade/cascade.xml')
 
@@ -90,7 +90,7 @@ if __name__ == '__main__' :
     
         # Display FPS on frame
         cv2.putText(frame, "FPS : " + str(int(fps)), (100,50), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (50,170,50), 2);
-        print(fps)
+        #print(fps)
         # Display result
 
         x, y, w, h = bbox
@@ -100,6 +100,11 @@ if __name__ == '__main__' :
 
         angulo = medy/(medx-frame.shape[1]/2)
         angulo = math.atan(angulo)
+        if angulo < 0: angulo = angulo + math.pi
+        #Transforma o angulo em uma escala de 10 bits
+        angulo = int(angulo*(1023/math.pi))
+        
+        print(angulo)
         analogWrite(angulo)
         cv2.imshow("Tracking", frame)
         
