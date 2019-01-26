@@ -27,12 +27,22 @@ class WebcamVideoStream:
  
 			# otherwise, read the next frame from the stream
 			(self.grabbed, self.frame) = self.stream.read()
+			
  
 	def read(self):
 		# return the frame most recently read
-		return True, self.frame
+		return self.grabbed, self.frame
  
-	def stop(self):
+	def release(self):
 		# indicate that the thread should be stopped
 		self.stopped = True
+if __name__ == "__main__":
 
+	camera = WebcamVideoStream().start()
+	while True:
+		r, frame = camera.read()
+		cv2.imshow('', frame)
+		if cv2.waitKey(1) == ord('q'): 
+			camera.release()
+			cv2.destroyAllWindows()
+			break

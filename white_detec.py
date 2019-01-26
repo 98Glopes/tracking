@@ -1,5 +1,7 @@
-# -*- coding: utf-8 -*-
-
+# -*- coding: utf-8 -*
+"""
+Script para sinalizar quando o carro estiver sobre a plataforma
+"""
 import argparse
 import time
 
@@ -9,6 +11,7 @@ import numpy as np
 
 from webcam import WebcamVideoStream
 from fps import FPS
+from hardware import digitalWrite
 
 def write(img, texto, cor=(255,0,0), pos=(20,40)):
     fonte = cv2.FONT_HERSHEY_SIMPLEX
@@ -37,7 +40,7 @@ if __name__ == '__main__':
     while True:
 
 #Le o frame disponivel da camera através da classe WebcamVideoStream
-        frame = camera.read()
+        r, frame = camera.read()
 #        frame = imutils.resize(frame, width=680)
 
 #Converte para escala de cinza, aplica um filtro gaussiano e binariza
@@ -54,8 +57,11 @@ if __name__ == '__main__':
 #Verifica se a porcentagem de branco esta maior que o limite
         if percent > args['limite']:
 
+            digitalWrite(True)
             write(bin, 'Plataforma Localizada', pos=(130,40))
+        else:
 
+            digitalWrite(False)
 #Escreve na Imagem a porcentagem de branco e mostra as imagens    
         write(bin, str(round(percent)))
         cv2.imshow('Gray', bin)
@@ -66,7 +72,7 @@ if __name__ == '__main__':
         if cv2.waitKey(1) == ord('q'):
             
             fps.stop()
-            camera.stop()
+            camera.release()
             print(fps.elapsed())
             print(fps.fps())
             cv2.destroyAllWindows()

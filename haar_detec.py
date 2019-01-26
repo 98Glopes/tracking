@@ -4,7 +4,7 @@
 import cv2 
 from fps import FPS
 
-camera = cv2.VideoCapture(0)
+camera = cv2.VideoCapture('cone.mp4')
 fps = FPS().start()
 df = cv2.CascadeClassifier('haar_cascade/cascade.xml')
 
