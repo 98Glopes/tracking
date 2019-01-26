@@ -18,7 +18,7 @@ if __name__ == '__main__' :
     tracker = cv2.TrackerKCF_create()
     
     #Escolher a partir dos argumentos entre acessar a camera ou abrir um video
-    video = cv2.VideoCapture('cone.mp4')
+    video = cv2.VideoCapture(0)
     #Inicializa o detector por HAAR Cascades
     df = cv2.CascadeClassifier('haar_cascade/cascade.xml')
 

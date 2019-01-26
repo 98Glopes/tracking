@@ -7,7 +7,7 @@ import math
 
 from hardware import analogWrite
 
-camera = cv2.VideoCapture('cone.mp4')
+camera = cv2.VideoCapture(0)
 fps = FPS().start()
 df = cv2.CascadeClassifier('haar_cascade/cascade.xml')
 
