@@ -52,15 +52,6 @@ if __name__ == '__main__' :
             print("Cone Localizado")
             break
         
-
- #   cones = df.detectMultiScale(gray,
- #   scaleFactor = 1.5, minNeighbors = 11,
- #   minSize = (30,30), flags = cv2.CASCADE_SCALE_IMAGE)
-    
- #   print(cones)
- #   bbox = cones
-
-
     
     # Define an initial bounding box
     # bbox = (287, 23, 86, 320)
