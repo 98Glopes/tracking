@@ -6,10 +6,11 @@ from fps import FPS
 import math
 
 from hardware import analogWrite
+from hsv_filter import filtro_hsv
 
-camera = cv2.VideoCapture(0)
+camera = cv2.VideoCapture('videos/cone.mp4')
 fps = FPS().start()
-df = cv2.CascadeClassifier('haar_cascade/cascade.xml')
+df = cv2.CascadeClassifier('haar_cascade/track.xml')
 
 #Criação do detector de faces
 
@@ -17,7 +18,9 @@ while True:
 
     try:
        r, frame = camera.read()
+       frame = filtro_hsv(frame)
        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY) 
+       #frame = cv2.equalizeHist(frame)
     except:
         fps.stop()
         print(fps.fps())
@@ -25,12 +28,12 @@ while True:
  
 #Executa a detecção
     faces = df.detectMultiScale(frame,
-        scaleFactor = 1.5, minNeighbors = 7,
-        minSize = (30,30), flags = cv2.CASCADE_SCALE_IMAGE)
+        scaleFactor = 1.2, minNeighbors = 15,
+        minSize = (40,40), flags = cv2.CASCADE_SCALE_IMAGE)
 
 #Desenha retangulos amarelos na iamgem original (colorida)
     for (x, y, w, h) in faces:
-        cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 255), 3)
+        cv2.rectangle(frame, (x, y), (x + w, y + h), 255, 3)
 #Exibe imagem. Título da janela exibe número de faces
     cv2.imshow('Cone', frame)
     fps.update()
@@ -49,7 +52,7 @@ while True:
         print(angulo)
         analogWrite(angulo)
 
-    if cv2.waitKey(32) == ord('q'):
+    if cv2.waitKey(10) == ord('q'):
 
         cv2.destroyAllWindows()
         camera.release()
