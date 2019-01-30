@@ -21,7 +21,7 @@ if __name__ == '__main__' :
     #Escolher a partir dos argumentos entre acessar a camera ou abrir um video
     video = cv2.VideoCapture('videos/cone.mp4')
     #Inicializa o detector por HAAR Cascades
-    df = cv2.CascadeClassifier('haar_cascade/track.xml')
+    df = cv2.CascadeClassifier('haar_cascade/1900_15stages.xml')
 
     # Read first frame.
     r, frame = video.read()
@@ -33,13 +33,14 @@ if __name__ == '__main__' :
     while True:
 
         r, frame = video.read()
+        frame = filtro_hsv(frame)
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         gray = cv2.equalizeHist(gray)
 
         #Aplica o detector de cones, retorna uma lista com as 
         #Bounding box dos cones encontrados
         cones = df.detectMultiScale(gray,
-                scaleFactor=1.6, minNeighbors=17,
+                scaleFactor=1.5, minNeighbors=22,
                 minSize=(50,50), flags=cv2.CASCADE_SCALE_IMAGE)
 
     #Desenha retangulos amarelos na iamgem original (colorida)
@@ -121,7 +122,7 @@ if __name__ == '__main__' :
         cv2.imshow("Tracking", frame)
         
         # Exit if ESC pr
-        k = cv2.waitKey(1) & 0xff
+        k = cv2.waitKey(10) & 0xff
         if k == ord('q') : 
 
             video.release()
