@@ -59,7 +59,6 @@ if __name__ == '__main__' :
             cv2.destroyAllWindows()
             print("Cone Localizado")
             break
-
     # Uncomment the line below to select a different bounding box
     #bbox = cv2.selectROI(frame, False)
 

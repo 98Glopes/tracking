@@ -8,7 +8,7 @@ import math
 from hardware import analogWrite
 from hsv_filter import filtro_hsv
 
-camera = cv2.VideoCapture('videos/cone5.mp4')
+camera = cv2.VideoCapture(0)
 fps = FPS().start()
 df = cv2.CascadeClassifier('haar_cascade/1900_15stages.xml')
 
@@ -36,6 +36,18 @@ while True:
     for (x, y, w, h) in faces:
         cv2.rectangle(frame, (x, y), (x + w, y + h), 255, 3)
 #Exibe imagem. Título da janela exibe número de faces
+
+    if len(faces) == 1:
+
+        x, y, w, h = faces[0]
+        medx = (2*x+h)/2
+        medy = (2*y+w)/2
+        cv2.circle(frame, (int(medx), int(medy)), 50, (0,0,0))
+
+        angulo = medy/(medx-frame.shape[1]/2)
+        angulo = math.atan(angulo)
+        print(angulo)
+
     cv2.imshow('Cone', frame)
     fps.update()
     if len(faces) == 1:
