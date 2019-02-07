@@ -11,16 +11,60 @@ from fps import FPS
 from hardware import analogWrite
 from hsv_filter import filtro_hsv
 
+
+def detect_cone(camera):
+    while True:
+
+        r, frame = camera.read()
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        #gray = cv2.equalizeHist(gray)
+
+        #Aplica o detector de cones, retorna uma lista com as 
+        #Bounding box dos cones encontrados
+        cones = df.detectMultiScale(gray,
+                scaleFactor=args['scalefactor'], minNeighbors=args['neighbors'],
+                minSize=(40,40), flags=cv2.CASCADE_SCALE_IMAGE)
+
+    #Desenha retangulos amarelos na iamgem original (colorida)
+        for (x, y, w, h) in cones:
+            cv2.rectangle(gray, (x, y), (x + w, y + h), (0, 255, 255), 3)
+
+        cv2.imshow('Procurando Cone', gray)
+        if cv2.waitKey(44) == ord('q'): break
+
+        #Verfica se existe apenas um cone na imagem
+        
+        if len(cones) == 1:
+
+            #Transfora bbox encontrada em tupla
+            #bbox = (x, y, w, h)
+            
+            cv2.destroyAllWindows()
+            print("Cone Localizado")
+            return tuple(cones[0])
+
+
+
 if __name__ == '__main__' :
 
 #Argumentos para chamada via linha de comando
- 
+    ap = argparse.ArgumentParser()
+    ap.add_argument("-s", "--source", default=0,
+	    help="Camera de onde será extraido as imagens")
+    ap.add_argument("-c", "--classifier", default="haar_cascade/1900_15stages.xml",
+        help="Classificador para as imagens")
+    ap.add_argument("-sf", "--scalefactor", default=2.0, type=float,
+        help="Scale Factor do detect multi scale")
+    ap.add_argument("-n", "--neighbors", default=30, type=int,
+        help="minNeighbors do detect multi scale")
+    args = vars(ap.parse_args())
+
     #Cria um objeto para o tracker KCF
     tracker = cv2.TrackerKCF_create()
     
     #Escolher a partir dos argumentos entre acessar a camera ou abrir um video
-    video = cv2.VideoCapture('videos/b_cone_02.mp4')
-    df = cv2.CascadeClassifier('haar_cascade/1900_5050_10.xml')
+    video = cv2.VideoCapture(args['source'])
+    df = cv2.CascadeClassifier(args['classifier'])
 
     # Read first frame.
     r, frame = video.read()
@@ -29,39 +73,7 @@ if __name__ == '__main__' :
         print('erro')
     i = 0
     #Loop para detectar os cones com Haar Cascade
-    while True:
-
-        r, frame = video.read()
-        #frame = filtro_hsv(frame)
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        gray = cv2.equalizeHist(gray)
-
-        #Aplica o detector de cones, retorna uma lista com as 
-        #Bounding box dos cones encontrados
-        cones = df.detectMultiScale(gray,
-                scaleFactor=1.5, minNeighbors=3,
-                minSize=(50,50), flags=cv2.CASCADE_SCALE_IMAGE)
-
-    #Desenha retangulos amarelos na iamgem original (colorida)
-        for (x, y, w, h) in cones:
-            cv2.rectangle(gray, (x, y), (x + w, y + h), (0, 255, 255), 3)
-
-        cv2.imshow('Procurando Cone', gray)
-        if cv2.waitKey(1) == ord('q'): break
-
-        #Verfica se existe apenas um cone na imagem
-        
-        if len(cones) == 1:
-
-            #Transfora bbox encontrada em tupla
-            #bbox = (x, y, w, h)
-            bbox = tuple(cones[0])
-            cv2.destroyAllWindows()
-            print("Cone Localizado")
-            break
-    # Uncomment the line below to select a different bounding box
-    #bbox = cv2.selectROI(frame, False)
-
+    bbox = detect_cone(video)
     # Initialize tracker with first frame and bounding box
     last_bbox = bbox
     ok = tracker.init(frame, bbox)
@@ -69,10 +81,6 @@ if __name__ == '__main__' :
     while True:
         # Read a new frame
         r, frame = video.read()
-        frame = filtro_hsv(frame)
-        #frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        #frame = cv2.equalizeHist(frame)
-        #frame = cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR)
 
         #Iniciliza o timer para medir o fps
         timer = cv2.getTickCount()
@@ -91,8 +99,11 @@ if __name__ == '__main__' :
             last_bbox = bbox
         else :
             # Tracking failure
-            bbox = (1, 1, 1, 1)
             cv2.putText(frame, "Tracking failure detected", (100,80), cv2.FONT_HERSHEY_SIMPLEX, 0.75,(0,0,255),2)
+            cv2.destroyAllWindows()
+            bbox = detect_cone(video)
+            tracker.init(frame, bbox)
+            continue
 
         # Display tracker type on frame
         cv2.putText(frame, 'KCF ' + " Tracker", (100,20), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (50,170,50),2);
@@ -120,7 +131,7 @@ if __name__ == '__main__' :
         cv2.imshow("Tracking", frame)
         
         # Exit if ESC pr
-        k = cv2.waitKey(10) & 0xff
+        k = cv2.waitKey(44) & 0xff
         if k == ord('q') : 
 
             video.release()
