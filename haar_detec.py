@@ -45,14 +45,14 @@ if __name__ == '__main__':
             break
     
     #Executa a detecção
-        faces = df.detectMultiScale(frame,
+        cones = df.detectMultiScale(frame,
             scaleFactor = args['scalefactor'], minNeighbors = args['neighbors'],
             minSize = (35,35), flags = cv2.CASCADE_SCALE_IMAGE)
 
     #Desenha retangulos amarelos na iamgem original (colorida)
-        for (x, y, w, h) in faces:
+        for (x, y, w, h) in cones:
             cv2.rectangle(frame, (x, y), (x + w, y + h), 255, 3)
-    #Exibe imagem. Título da janela exibe número de faces
+    
 
         if len(faces) == 1:
 
@@ -81,7 +81,7 @@ if __name__ == '__main__':
             #Transforma o angulo em uma escala de 10 bits
             angulo = int(angulo*(1023/math.pi))
             print(angulo)
-            analogWrite(angulo)
+            analogWrite(1, angulo)
 
         if cv2.waitKey(1) == ord('q'):
 

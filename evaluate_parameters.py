@@ -22,12 +22,19 @@ if __name__ == '__main__':
     ap.add_argument("-d", "--dataset", type=str,
         help="Dataset para validar e avaliar os classificadores")
     ap.add_argument("-t", "--threshold", type=int, default=33)
+    ap.add_argument("-csv", "--csv", default=None,
+        help="Especifica um arquivo csv para receber a saida")
     args = vars(ap.parse_args())
 
     print('[INFO] Avaliando classificadores para o datset: ', args['dataset'])
     print('.................................................................. \n\n')
     #Lista os classificadores *.xml na pasta especificada
     classificadores = glob.glob(args['classifier']+'*.xml')
+
+    #Abre arquivo CSV e adiciona as colunas iniciais
+    if args['csv']:
+        csv = open(args['csv'], mode='w')
+        csv.writelines('classificador;frames;positivos;f_positivos \n')
 
     for classificador in classificadores:
 
@@ -111,5 +118,8 @@ if __name__ == '__main__':
         print('[INFO] Positivos: ', true_pos)
         print('[INFO] Falsos Positivos: ', false_pos)
         print('....................................... \n ')
+        if args['csv']:
+            csv.writelines(classificador + ';' + str(total_frames) + ';' \
+                           + str(true_pos) + ';' + str(false_pos) + '\n')
 
         
