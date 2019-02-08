@@ -53,24 +53,12 @@ if __name__ == '__main__':
         for (x, y, w, h) in cones:
             cv2.rectangle(frame, (x, y), (x + w, y + h), 255, 3)
     
-
-        if len(faces) == 1:
-
-            x, y, w, h = faces[0]
-            medx = (2*x+h)/2
-            medy = (2*y+w)/2
-            cv2.circle(frame, (int(medx), int(medy)), 50, (0,0,0))
-
-            angulo = medy/(medx-frame.shape[1]/2)
-            angulo = math.atan(angulo)
-            print(angulo)
-
-        cv2.imshow('Cone', frame)
+        #cv2.imshow('Cone', frame)       
         fps.update()
 
-        if len(faces) == 1:
+        if len(cones) == 1:
 
-            x, y, w, h = faces[0]
+            x, y, w, h = cones[0]
             medx = (2*x+h)/2
             medy = (2*y+w)/2
             cv2.circle(frame, (int(medx), int(medy)), 50, (0,0,0))
