@@ -15,7 +15,7 @@ if __name__ == '__main__':
     ap = argparse.ArgumentParser()
     ap.add_argument("-s", "--source", default=0,
 	    help="Camera de onde será extraido as imagens")
-    ap.add_argument("-c", "--classifier", default="haar_cascade/1900_15stages.xml",
+    ap.add_argument("-c", "--classifier", default="classifiers/1900_15stages.xml",
         help="Classificador para as imagens")
     ap.add_argument("-sf", "--scalefactor", default=2.0, type=float,
         help="Scale Factor do detect multi scale")
