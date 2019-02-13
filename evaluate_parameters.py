@@ -6,7 +6,6 @@ import glob
 import cv2
 import numpy as np
 
-
 if __name__ == '__main__':
 
 #Argumentos para chamada via linha de comando
@@ -36,7 +35,7 @@ if __name__ == '__main__':
         csv = open(args['csv'], mode='w')
         csv.writelines('classificador;frames;positivos;f_positivos \n')
 
-    for classificador in classificadores:
+    for classificador in ['classifiers/2400_25x25_17stages.xml', 'classifiers/2400_25x25_23stages.xml', 'classifiers/1900_25x25_20stages.xml'   ]:
 
         #Carrega as o classificador
         df = cv2.CascadeClassifier(classificador)
@@ -48,6 +47,7 @@ if __name__ == '__main__':
         total_frames = 0
         false_pos = 0
         true_pos = 0
+        misses = 0
         false_postives = []
         true_positves = []
 
@@ -60,8 +60,9 @@ if __name__ == '__main__':
 
             #Carrega a imagem e desenha o bounding box da mesma
             img  = cv2.imread(args['dataset']+image_path)
+            
             gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-
+            #gray = cv2.equalizeHist(gray)
             #Escreve no topo da imagem o classificador utilizado
             cv2.putText(img, "Classificador: "+classificador, (50,40), 
                         cv2.FONT_HERSHEY_SIMPLEX, 0.75,(0,255,0),2)
@@ -73,13 +74,17 @@ if __name__ == '__main__':
             #Detecta os objetos da imagem utilizando o classificador
             objetos = df.detectMultiScale(gray,
                 scaleFactor = args['scalefactor'], minNeighbors = args['neighbors'],
-                minSize = (35,35), flags = cv2.CASCADE_SCALE_IMAGE)
+                minSize = (0,0), flags = cv2.CASCADE_SCALE_IMAGE)
             
             #background binario da imagem original
             background = np.zeros((img.shape[0],img.shape[1]), dtype=np.uint8)
             background[ int(bbox[1]):int(bbox[1])+int(bbox[3]) , int(bbox[0]):int(bbox[0])+int(bbox[2]) ] = 255
             roi_background = np.zeros((img.shape[0],img.shape[1]), dtype=np.uint8)
 
+            if len(objetos)==0:
+                misses += 1
+                #total_frames += 1
+                #continue
             #Desenha a area dos objetos encontrados
             for (x, y, w, h) in objetos:
                 cv2.rectangle(img, (x, y) , (x+w, y+h), (0,0,255), 2, 1)
@@ -117,9 +122,8 @@ if __name__ == '__main__':
         print('[INFO] Total de frames: ', total_frames)
         print('[INFO] Positivos: ', true_pos)
         print('[INFO] Falsos Positivos: ', false_pos)
+        print('[INFO] Falhas: ', misses)
         print('....................................... \n ')
         if args['csv']:
             csv.writelines(classificador + ';' + str(total_frames) + ';' \
                            + str(true_pos) + ';' + str(false_pos) + '\n')
-
-        

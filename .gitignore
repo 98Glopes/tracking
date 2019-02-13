@@ -9,3 +9,4 @@ imagens
 *.zip
 *.ipy*
 log.txt
+flask.py

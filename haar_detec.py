@@ -53,7 +53,7 @@ if __name__ == '__main__':
         for (x, y, w, h) in cones:
             cv2.rectangle(frame, (x, y), (x + w, y + h), 255, 3)
     
-        #cv2.imshow('Cone', frame)       
+        cv2.imshow('Cone', frame)       
         fps.update()
 
         if len(cones) == 1:
@@ -71,7 +71,7 @@ if __name__ == '__main__':
             print(angulo)
             analogWrite(1, angulo)
 
-        if cv2.waitKey(1) == ord('q'):
+        if cv2.waitKey(70) == ord('q'):
 
             fps.stop()
             print(fps.fps())
