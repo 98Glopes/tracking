@@ -21,7 +21,14 @@ if __name__ == '__main__':
         help="Scale Factor do detect multi scale")
     ap.add_argument("-n", "--neighbors", default=30, type=int,
         help="minNeighbors do detect multi scale")
+    ap.add_argument("-v", "--video", default=None,
+        help="Especifica um arquivo de video para saida")
     args = vars(ap.parse_args())
+
+    if args['video']:
+
+        fourcc = cv2.VideoWriter_fourcc(*'DIVX')
+        output = cv2.VideoWriter(args['video'],fourcc, 20.0,(640,352))
 
     camera = cv2.VideoCapture(args['source'])
     fps = FPS().start()
@@ -53,7 +60,13 @@ if __name__ == '__main__':
         for (x, y, w, h) in cones:
             cv2.rectangle(frame, (x, y), (x + w, y + h), 255, 3)
     
-        cv2.imshow('Cone', frame)       
+        cv2.imshow('Cone', frame)
+
+        #Se especificado algum arquivo de video de saida, salva o frame
+        if args['video']:
+            video_frame = cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR)
+            output.write(video_frame)
+
         fps.update()
 
         if len(cones) == 1:
@@ -71,7 +84,7 @@ if __name__ == '__main__':
             print(angulo)
             analogWrite(1, angulo)
 
-        if cv2.waitKey(70) == ord('q'):
+        if cv2.waitKey(100) == ord('q'):
 
             fps.stop()
             print(fps.fps())
