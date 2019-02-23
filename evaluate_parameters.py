@@ -29,13 +29,14 @@ if __name__ == '__main__':
     print('.................................................................. \n\n')
     #Lista os classificadores *.xml na pasta especificada
     classificadores = glob.glob(args['classifier']+'*.xml')
+    
 
     #Abre arquivo CSV e adiciona as colunas iniciais
     if args['csv']:
         csv = open(args['csv'], mode='w')
         csv.writelines('classificador;frames;positivos;f_positivos \n')
 
-    for classificador in ['classifiers/2400_25x25_17stages.xml', 'classifiers/2400_25x25_23stages.xml', 'classifiers/1900_25x25_20stages.xml'   ]:
+    for classificador in classificadores:
 
         #Carrega as o classificador
         df = cv2.CascadeClassifier(classificador)
@@ -47,13 +48,12 @@ if __name__ == '__main__':
         total_frames = 0
         false_pos = 0
         true_pos = 0
-        misses = 0
+        false_neg = 0
         false_postives = []
         true_positves = []
 
         #Le cada imagem do dataset passado
         for linha in info:
-            
             #Separa o path da imagem e ROI da imagem
             image_path = linha.split(' ')[0]
             bbox = linha.rstrip('\n').split(' ')[2:]
@@ -82,7 +82,7 @@ if __name__ == '__main__':
             roi_background = np.zeros((img.shape[0],img.shape[1]), dtype=np.uint8)
 
             if len(objetos)==0:
-                misses += 1
+                false_neg += 1
                 #total_frames += 1
                 #continue
             #Desenha a area dos objetos encontrados
@@ -120,9 +120,8 @@ if __name__ == '__main__':
 
         print('[INFO] Classificador: ', classificador)
         print('[INFO] Total de frames: ', total_frames)
-        print('[INFO] Positivos: ', true_pos)
-        print('[INFO] Falsos Positivos: ', false_pos)
-        print('[INFO] Falhas: ', misses)
+        print('[INFO]  True Positives: ', true_pos , ' False Positives: ', false_pos)
+        print('[INFO] False Negatives: ', false_neg, ' True Positives: 0')
         print('....................................... \n ')
         if args['csv']:
             csv.writelines(classificador + ';' + str(total_frames) + ';' \

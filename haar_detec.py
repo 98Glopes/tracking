@@ -15,7 +15,7 @@ if __name__ == '__main__':
     ap = argparse.ArgumentParser()
     ap.add_argument("-s", "--source", default=0,
 	    help="Camera de onde será extraido as imagens")
-    ap.add_argument("-c", "--classifier", default="classifiers/1900_15stages.xml",
+    ap.add_argument("-c", "--classifier", default="classifiers/1900_15stages.xml", type=str,
         help="Classificador para as imagens")
     ap.add_argument("-sf", "--scalefactor", default=2.0, type=float,
         help="Scale Factor do detect multi scale")
@@ -28,7 +28,7 @@ if __name__ == '__main__':
     if args['video']:
 
         fourcc = cv2.VideoWriter_fourcc(*'DIVX')
-        output = cv2.VideoWriter(args['video'],fourcc, 20.0,(640,352))
+        output = cv2.VideoWriter(args['video'],fourcc, 20.0,(640,480))
 
     camera = cv2.VideoCapture(args['source'])
     fps = FPS().start()
@@ -84,7 +84,7 @@ if __name__ == '__main__':
             print(angulo)
             analogWrite(1, angulo)
 
-        if cv2.waitKey(100) == ord('q'):
+        if cv2.waitKey(200) == ord('q'):
 
             fps.stop()
             print(fps.fps())
