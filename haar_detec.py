@@ -4,6 +4,7 @@ import argparse
 
 import cv2 
 
+from webcam import WebcamVideoStream
 from fps import FPS
 from hardware import analogWrite
 from hsv_filter import filtro_hsv
@@ -19,7 +20,7 @@ if __name__ == '__main__':
         help="Classificador para as imagens")
     ap.add_argument("-sf", "--scalefactor", default=2.0, type=float,
         help="Scale Factor do detect multi scale")
-    ap.add_argument("-n", "--neighbors", default=30, type=int,
+    ap.add_argument("-n", "--neighbors", default=5, type=int,
         help="minNeighbors do detect multi scale")
     ap.add_argument("-v", "--video", default=None,
         help="Especifica um arquivo de video para saida")
@@ -30,7 +31,17 @@ if __name__ == '__main__':
         fourcc = cv2.VideoWriter_fourcc(*'DIVX')
         output = cv2.VideoWriter(args['video'],fourcc, 20.0,(640,480))
 
-    camera = cv2.VideoCapture(args['source'])
+    #Verifica se o parametro --source é um mumero (numero de uma camera)
+    #ou o caminho para algum arquivo de video
+    if args['source'].isnumeric():
+
+        #Se for o indice de uma camera usa a classe WebcamVideoStream
+        camera = WebcamVideoStream(src=int(args['source'])).start()
+    else:
+
+        #se for uma string inicia com a classe padrão da opencv
+        camera = cv2.VideoCapture(args['source'])
+
     fps = FPS().start()
     df = cv2.CascadeClassifier(args['classifier'])
 
@@ -84,7 +95,7 @@ if __name__ == '__main__':
             print(angulo)
             analogWrite(1, angulo)
 
-        if cv2.waitKey(200) == ord('q'):
+        if cv2.waitKey(16) == ord('q'):
 
             fps.stop()
             print(fps.fps())
