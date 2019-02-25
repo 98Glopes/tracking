@@ -83,17 +83,18 @@ if __name__ == '__main__':
         if len(cones) == 1:
 
             x, y, w, h = cones[0]
-            medx = (2*x+h)/2
-            medy = (2*y+w)/2
-            cv2.circle(frame, (int(medx), int(medy)), 50, (0,0,0))
+            #medx = (2*x+h)/2
+            #medy = (2*y+w)/2
+            #cv2.circle(frame, (int(medx), int(medy)), 50, (0,0,0))
 
-            angulo = medy/(medx-frame.shape[1]/2)
-            angulo = math.atan(angulo)
-            if angulo < 0: angulo = angulo + math.pi
+            #angulo = medy/(medx-frame.shape[1]/2)
+            #angulo = math.atan(angulo)
+            #if angulo < 0: angulo = angulo + math.pi
             #Transforma o angulo em uma escala de 10 bits
-            angulo = int(angulo*(1023/math.pi))
-            print(angulo)
-            analogWrite(1, angulo)
+            #angulo = int(angulo*(1023/math.pi))
+            
+            print(int(x+w/2))
+            analogWrite(1, int(x+w/2))
 
         if cv2.waitKey(16) == ord('q'):
 
