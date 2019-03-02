@@ -14,9 +14,9 @@ if __name__ == '__main__':
 
 #Argumentos para chamada via linha de comando
     ap = argparse.ArgumentParser()
-    ap.add_argument("-s", "--source", default=0,
+    ap.add_argument("-s", "--source", default='0',
 	    help="Camera de onde será extraido as imagens")
-    ap.add_argument("-c", "--classifier", default="classifiers/1900_15stages.xml", type=str,
+    ap.add_argument("-c", "--classifier", default="classifiers/800_25x25_24stages.xml", type=str,
         help="Classificador para as imagens")
     ap.add_argument("-sf", "--scalefactor", default=2.0, type=float,
         help="Scale Factor do detect multi scale")
@@ -24,6 +24,8 @@ if __name__ == '__main__':
         help="minNeighbors do detect multi scale")
     ap.add_argument("-v", "--video", default=None,
         help="Especifica um arquivo de video para saida")
+    ap.add_argument("-d", "--debug", default=False, type=bool,
+        help="True para ativar o imshow")
     args = vars(ap.parse_args())
 
     if args['video']:
@@ -71,7 +73,7 @@ if __name__ == '__main__':
         for (x, y, w, h) in cones:
             cv2.rectangle(frame, (x, y), (x + w, y + h), 255, 3)
     
-        cv2.imshow('Cone', frame)
+        if args['debug']: cv2.imshow('Cone', frame)
 
         #Se especificado algum arquivo de video de saida, salva o frame
         if args['video']:
